@@ -1,0 +1,28 @@
+const express = require("express");
+const { sequelize } = require("./models");
+
+const userRoutes = require("./routes/userRoutes");
+const produkRoutes = require("./routes/produkRoutes");
+const transaksiRoutes = require("./routes/transaksiRoutes");
+const detailRoutes = require("./routes/detailTransaksiRoutes");
+
+const app = express();
+app.use(express.json());
+
+// Routes
+app.use("/api/users", userRoutes);
+app.use("/api/produk", produkRoutes);
+app.use("/api/transaksi", transaksiRoutes);
+app.use("/api/detail", detailRoutes);
+
+app.get("/", (req, res) => res.send("API Marketplace Produk Pertanian Lokal"));
+
+sequelize
+  .sync({ alter: true })
+  .then(() => {
+    console.log("Database synced");
+    app.listen(5000, () =>
+      console.log("Server running at http://localhost:5000")
+    );
+  })
+  .catch((err) => console.error("DB Sync error:", err));
