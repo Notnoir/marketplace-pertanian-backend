@@ -36,3 +36,42 @@ exports.updateStatus = async (req, res) => {
     res.status(500).json({ message: "Update failed", error: err.message });
   }
 };
+
+exports.getTransaksiByPetaniId = async (req, res) => {
+  try {
+    const petaniId = req.params.id;
+
+    // Dapatkan semua produk milik petani ini
+    const produkPetani = await Produk.findAll({
+      where: { user_id: petaniId },
+      attributes: ["id"],
+    });
+
+    const produkIds = produkPetani.map((p) => p.id);
+
+    // Dapatkan semua detail transaksi yang melibatkan produk petani
+    const detailTransaksi = await DetailTransaksi.findAll({
+      where: {
+        produk_id: {
+          [Op.in]: produkIds,
+        },
+      },
+      include: [
+        {
+          model: Transaksi,
+          include: [User],
+        },
+        {
+          model: Produk,
+        },
+      ],
+    });
+
+    res.json(detailTransaksi);
+  } catch (err) {
+    res.status(500).json({
+      message: "Fetch transaksi petani failed",
+      error: err.message,
+    });
+  }
+};

@@ -5,9 +5,19 @@ const userRoutes = require("./routes/userRoutes");
 const produkRoutes = require("./routes/produkRoutes");
 const transaksiRoutes = require("./routes/transaksiRoutes");
 const detailRoutes = require("./routes/detailTransaksiRoutes");
-
+const cors = require("cors");
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
+// Remove this line: app.use(cors());
 
 // Routes
 app.use("/api/users", userRoutes);
