@@ -1,6 +1,7 @@
 const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
+const loginTracker = require("../middleware/loginTracker");
 
 exports.register = async (req, res) => {
   try {
@@ -24,10 +25,56 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (!user) {
+      // Catat percobaan login yang gagal
+      if (email) {
+        const attempts = loginTracker.recordFailure(email);
+        const remainingAttempts = 5 - attempts.attempts;
+
+        if (attempts.locked) {
+          const lockoutMinutes = Math.ceil(
+            (attempts.lockUntil - Date.now()) / 60000
+          );
+          return res.status(429).json({
+            message: `Akun terkunci karena terlalu banyak percobaan gagal. Coba lagi dalam ${lockoutMinutes} menit.`,
+          });
+        } else {
+          return res.status(404).json({
+            message: `User tidak ditemukan. Sisa percobaan: ${
+              remainingAttempts > 0 ? remainingAttempts : 0
+            }`,
+          });
+        }
+      } else {
+        return res.status(404).json({ message: "User tidak ditemukan" });
+      }
+    }
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ message: "Invalid password" });
+    if (!match) {
+      // Catat percobaan login yang gagal
+      const attempts = loginTracker.recordFailure(email);
+      const remainingAttempts = 5 - attempts.attempts;
+
+      if (attempts.locked) {
+        const lockoutMinutes = Math.ceil(
+          (attempts.lockUntil - Date.now()) / 60000
+        );
+        return res.status(429).json({
+          message: `Akun terkunci karena terlalu banyak percobaan gagal. Coba lagi dalam ${lockoutMinutes} menit.`,
+        });
+      } else {
+        return res.status(401).json({
+          message: `Password salah. Sisa percobaan: ${
+            remainingAttempts > 0 ? remainingAttempts : 0
+          }`,
+        });
+      }
+    }
+
+    // Jika login berhasil, reset percobaan gagal
+    loginTracker.recordSuccess(email);
 
     res.json({ message: "Login success", user });
   } catch (err) {

@@ -6,6 +6,8 @@ const produkRoutes = require("./routes/produkRoutes");
 const transaksiRoutes = require("./routes/transaksiRoutes");
 const detailRoutes = require("./routes/detailTransaksiRoutes");
 const cors = require("cors");
+const { apiLimiter } = require("./middleware/rateLimiter"); // Import rate limiter
+
 const app = express();
 
 app.use(
@@ -18,7 +20,9 @@ app.use(
 );
 
 app.use(express.json());
-// Remove this line: app.use(cors());
+
+// Terapkan rate limiter global untuk semua request API
+app.use(apiLimiter);
 
 // Routes
 app.use("/api/users", userRoutes);
