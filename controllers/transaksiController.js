@@ -1,4 +1,5 @@
-const { Transaksi, DetailTransaksi } = require("../models");
+const { Transaksi, DetailTransaksi, Produk, User } = require("../models");
+const { Op } = require("sequelize");
 
 exports.createTransaksi = async (req, res) => {
   try {
