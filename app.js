@@ -22,13 +22,14 @@ app.use(
 app.use(express.json());
 
 // Terapkan rate limiter global untuk semua request API
-app.use(apiLimiter);
+// Hapus rate limiter global
+// app.use(apiLimiter);
 
-// Routes
-app.use("/api/users", userRoutes);
+// Terapkan rate limiter hanya pada endpoint yang rentan terhadap penyalahgunaan
+app.use("/api/users", apiLimiter, userRoutes);
 app.use("/api/produk", produkRoutes);
 app.use("/api/transaksi", transaksiRoutes);
-app.use("/api/detail", detailRoutes);
+app.use("/api/detail-transaksi", detailRoutes);
 
 app.get("/", (req, res) => res.send("API Marketplace Produk Pertanian Lokal"));
 

@@ -1,5 +1,4 @@
-const { DetailTransaksi } = require("../models");
-const pool = require("../config/database");
+const { DetailTransaksi, Produk } = require("../models");
 
 exports.addDetail = async (req, res) => {
   try {
@@ -14,10 +13,11 @@ exports.getDetailByTransaksiId = async (req, res) => {
   const transaksiId = req.params.id;
 
   try {
-    const [results] = await pool.query(
-      "SELECT * FROM detail_transaksi WHERE transaksi_id = ?",
-      [transaksiId]
-    );
+    // Gunakan Sequelize ORM daripada raw query
+    const results = await DetailTransaksi.findAll({
+      where: { transaksi_id: transaksiId },
+      include: [Produk], // Opsional: Jika ingin menyertakan data produk
+    });
 
     res.json(results);
   } catch (error) {

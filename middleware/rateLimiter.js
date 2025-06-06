@@ -26,13 +26,13 @@ const bruteforce = new ExpressBrute(store, {
 
 // Rate limiter untuk semua request API
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 menit
-  max: 100, // Batas 100 request per IP dalam 15 menit
+  windowMs: 1 * 60 * 1000, // 15 menit
+  max: 500, // Batas 100 request per IP dalam 15 menit
   standardHeaders: true,
   legacyHeaders: false,
   message: {
     message:
-      "Terlalu banyak request dari IP ini, silakan coba lagi setelah 15 menit",
+      "Terlalu banyak request dari IP ini, silakan coba lagi setelah 1 menit",
   },
 });
 
