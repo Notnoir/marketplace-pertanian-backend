@@ -5,6 +5,7 @@ const userRoutes = require("./routes/userRoutes");
 const produkRoutes = require("./routes/produkRoutes");
 const transaksiRoutes = require("./routes/transaksiRoutes");
 const detailRoutes = require("./routes/detailTransaksiRoutes");
+const chatRoutes = require("./routes/chatRoutes"); // Tambahkan ini
 const cors = require("cors");
 const { apiLimiter } = require("./middleware/rateLimiter"); // Import rate limiter
 
@@ -30,6 +31,7 @@ app.use("/api/users", apiLimiter, userRoutes);
 app.use("/api/produk", produkRoutes);
 app.use("/api/transaksi", transaksiRoutes);
 app.use("/api/detail-transaksi", detailRoutes);
+app.use("/api/chat", chatRoutes); // Tambahkan ini
 
 app.get("/", (req, res) => res.send("API Marketplace Produk Pertanian Lokal"));
 
