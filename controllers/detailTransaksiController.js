@@ -1,4 +1,5 @@
 const { DetailTransaksi } = require("../models");
+const pool = require("../config/database");
 
 exports.addDetail = async (req, res) => {
   try {
@@ -9,13 +10,18 @@ exports.addDetail = async (req, res) => {
   }
 };
 
-exports.getByTransaksiId = async (req, res) => {
+exports.getDetailByTransaksiId = async (req, res) => {
+  const transaksiId = req.params.id;
+
   try {
-    const details = await DetailTransaksi.findAll({
-      where: { transaksi_id: req.params.id },
-    });
-    res.json(details);
-  } catch (err) {
-    res.status(500).json({ message: "Fetch failed", error: err.message });
+    const [results] = await pool.query(
+      "SELECT * FROM detail_transaksi WHERE transaksi_id = ?",
+      [transaksiId]
+    );
+
+    res.json(results);
+  } catch (error) {
+    console.error("Gagal mengambil detail transaksi:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
