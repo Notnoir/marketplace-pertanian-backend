@@ -38,7 +38,7 @@ const apiLimiter = rateLimit({
 
 // Rate limiter khusus untuk endpoint login
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 menit
+  windowMs: 1 * 60 * 1000, // 15 menit
   max: 5, // Batas 5 request login per IP dalam 15 menit
   standardHeaders: true,
   legacyHeaders: false,
