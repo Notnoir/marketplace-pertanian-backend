@@ -25,15 +25,18 @@ exports.getAllTransaksi = async (req, res) => {
 
 exports.updateStatus = async (req, res) => {
   try {
+    console.log("Update status request:", req.params.id, req.body);
     const { status } = req.body;
     const [updated] = await Transaksi.update(
       { status },
       { where: { id: req.params.id } }
     );
+    console.log("Update result:", updated);
     if (!updated)
       return res.status(404).json({ message: "Transaksi not found" });
     res.json({ message: "Status updated" });
   } catch (err) {
+    console.error("Update error:", err);
     res.status(500).json({ message: "Update failed", error: err.message });
   }
 };
