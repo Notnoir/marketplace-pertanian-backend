@@ -26,8 +26,8 @@ const bruteforce = new ExpressBrute(store, {
 
 // Rate limiter untuk semua request API
 const apiLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 15 menit
-  max: 500, // Batas 100 request per IP dalam 15 menit
+  windowMs: 5 * 60 * 1000, // 15 menit
+  max: 300, // Batas 100 request per IP dalam 15 menit
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -38,7 +38,7 @@ const apiLimiter = rateLimit({
 
 // Rate limiter khusus untuk endpoint login
 const loginLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 15 menit
+  windowMs: 5 * 60 * 1000, // 15 menit
   max: 5, // Batas 5 request login per IP dalam 15 menit
   standardHeaders: true,
   legacyHeaders: false,
