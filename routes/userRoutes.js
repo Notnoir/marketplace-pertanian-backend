@@ -6,7 +6,13 @@ const {
   bruteforceProtection,
 } = require("../middleware/rateLimiter");
 const loginTracker = require("../middleware/loginTracker");
+const {
+  verifyToken,
+  isAdmin,
+  isAdminOrPetaniOrPembeli,
+} = require("../middleware/authJwt"); // Import middleware JWT
 
+// Rute publik yang tidak memerlukan autentikasi
 router.post("/register", userController.register);
 
 // Terapkan rate limiting dan brute force protection pada endpoint login
@@ -18,10 +24,13 @@ router.post(
   userController.login
 );
 
-// Endpoint baru untuk admin
-router.get("/", userController.getAllUsers);
+// Middleware untuk melindungi semua rute di bawah ini
+router.use(verifyToken);
+
+// Endpoint baru untuk admin - dilindungi dengan JWT dan role admin
+router.get("/", isAdminOrPetaniOrPembeli, userController.getAllUsers);
 router.get("/:id", userController.getUserById);
 router.put("/:id", userController.updateUser);
-router.delete("/:id", userController.deleteUser);
+router.delete("/:id", isAdmin, userController.deleteUser);
 
 module.exports = router;

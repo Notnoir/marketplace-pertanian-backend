@@ -21,7 +21,10 @@ exports.getAllProduk = async (req, res) => {
 
     const produk = await Produk.findAll({
       where,
-      include: User,
+      include: {
+        model: User,
+        attributes: ["id", "nama", "role"], // Hanya sertakan atribut yang diperlukan
+      },
     });
     res.json(produk);
   } catch (err) {
@@ -33,7 +36,12 @@ exports.getAllProduk = async (req, res) => {
 
 exports.getProdukById = async (req, res) => {
   try {
-    const produk = await Produk.findByPk(req.params.id, { include: User });
+    const produk = await Produk.findByPk(req.params.id, {
+      include: {
+        model: User,
+        attributes: ["id", "nama", "role"], // Hanya sertakan atribut yang diperlukan
+      },
+    });
     if (!produk) return res.status(404).json({ message: "Produk not found" });
     res.json(produk);
   } catch (err) {

@@ -8,12 +8,14 @@ const detailRoutes = require("./routes/detailTransaksiRoutes");
 const chatRoutes = require("./routes/chatRoutes"); // Tambahkan ini
 const cors = require("cors");
 const { apiLimiter } = require("./middleware/rateLimiter"); // Import rate limiter
+const { verifyToken } = require("./middleware/authJwt"); // Import middleware JWT
 
 const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    // origin: "http://localhost:5173",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -27,6 +29,11 @@ app.use(express.json());
 // app.use(apiLimiter);
 
 // Terapkan rate limiter hanya pada endpoint yang rentan terhadap penyalahgunaan
+// Terapkan rate limiter dan JWT middleware pada endpoint users
+// Kecuali untuk endpoint login dan register yang perlu diakses tanpa token
+// app.use("/api/users/login", apiLimiter, userRoutes);
+// app.use("/api/users/register", apiLimiter, userRoutes);
+// Terapkan rate limiter pada endpoint users
 app.use("/api/users", apiLimiter, userRoutes);
 app.use("/api/produk", produkRoutes);
 app.use("/api/transaksi", transaksiRoutes);

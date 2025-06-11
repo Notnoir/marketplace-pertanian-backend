@@ -1,11 +1,25 @@
 const express = require("express");
 const router = express.Router();
 const produkController = require("../controllers/produkController");
+const {
+  verifyToken,
+  isAdmin,
+  isPetani,
+  isAdminOrPetani,
+} = require("../middleware/authJwt");
 
-router.post("/", produkController.createProduk);
+// Rute publik (tidak memerlukan autentikasi)
 router.get("/", produkController.getAllProduk);
 router.get("/:id", produkController.getProdukById);
-router.put("/:id", produkController.updateProduk);
-router.delete("/:id", produkController.deleteProduk);
+
+// Rute yang memerlukan autentikasi
+router.post("/", verifyToken, produkController.createProduk);
+router.put("/:id", verifyToken, produkController.updateProduk);
+router.delete(
+  "/:id",
+  verifyToken,
+
+  produkController.deleteProduk
+);
 
 module.exports = router;

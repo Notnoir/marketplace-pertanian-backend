@@ -2,6 +2,7 @@ const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
 const loginTracker = require("../middleware/loginTracker");
+const { generateToken } = require("../middleware/authJwt"); // Import fungsi generateToken
 
 exports.register = async (req, res) => {
   try {
@@ -76,7 +77,18 @@ exports.login = async (req, res) => {
     // Jika login berhasil, reset percobaan gagal
     loginTracker.recordSuccess(email);
 
-    res.json({ message: "Login success", user });
+    // Generate JWT token
+    const token = generateToken(user);
+
+    // Kirim token bersama dengan data user (tanpa password)
+    const userData = { ...user.get() };
+    delete userData.password;
+
+    res.json({
+      message: "Login success",
+      user: userData,
+      token: token,
+    });
   } catch (err) {
     res.status(500).json({ message: "Login failed", error: err.message });
   }
